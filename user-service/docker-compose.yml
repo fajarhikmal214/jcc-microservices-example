@@ -1,0 +1,19 @@
+version: '3'
+services:
+  app:
+    build: .
+    environment:
+    - MONGODB_URL=mongodb://mongo:27017/user
+    ports:
+    - 3000:3000
+    volumes:
+    - .:/app
+    command: npm run watch
+
+  mongo:
+    image: mongo:4.4
+    volumes:
+    - mongo-volume:/data/db
+
+volumes:
+  mongo-volume:

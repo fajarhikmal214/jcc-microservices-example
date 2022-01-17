@@ -1,0 +1,27 @@
+{
+  "name": "user-service",
+  "version": "0.1.0",
+  "description": "user service that handle users",
+  "main": "app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "jest",
+    "watch": "nodemon src/app.js",
+    "lint": "./node_modules/.bin/eslint src"
+  },
+  "author": "imamfzn",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "joi": "^17.4.0",
+    "express": "^4.17.2",
+    "express-winston": "^4.2.0",
+    "humps": "^2.0.1",
+    "mongoose": "^6.1.6",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.15",
+    "pino": "^6.11.1"
+  }
+}
