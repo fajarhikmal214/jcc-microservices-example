@@ -2,6 +2,7 @@ const Ticket = require("../models/ticket");
 const logger = require('../lib/logger');
 const jwt = require("jsonwebtoken");
 const axios = require("axios").default;
+const { CircuitBreaker } = require('../lib/failure-handling');
 
 if (!process.env.EVENT_SERVICE_URL) {
   logger.fatal('EVENT_SERVICE_URL not provided.');
@@ -29,12 +30,17 @@ function handleDBValidationError(error) {
 
 module.exports = {
   async getEventTickets({ user, id }) {
-    const event = await axios.get(`${baseURlEventService}/events/${id}`, {
-      headers: {
-        Authorization:
-          "Bearer " + jwt.sign(user, process.env.ACCESS_TOKEN_SECRET),
-      },
-    });
+    const breaker = new CircuitBreaker(() => {
+      return axios.get(`${baseURlEventService}/events/${id}`, {
+        headers: {
+          Authorization:
+            "Bearer " + jwt.sign(user, process.env.ACCESS_TOKEN_SECRET),
+        },
+      })
+    })
+
+    const event = await breaker.fire();
+    breaker.status();
 
     if (!event.data) {
       throw new ResourceNotFoundError("Event");
