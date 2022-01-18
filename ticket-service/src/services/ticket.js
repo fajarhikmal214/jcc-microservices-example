@@ -1,6 +1,7 @@
 const Ticket = require("../models/ticket");
+const jwt = require("jsonwebtoken");
 const axios = require("axios").default;
-const baseURlEventService = "http://localhost:3000";
+const baseURlEventService = "http://localhost:3003";
 
 const {
   ResourceNotFoundError,
@@ -20,26 +21,36 @@ function handleDBValidationError(error) {
 }
 
 module.exports = {
-  async getEventTickets(id) {
-    const event = await axios.get(`${baseURlEventService}/events/${id}`);
+  async getEventTickets({ user, id }) {
+    const event = await axios.get(`${baseURlEventService}/events/${id}`, {
+      headers: {
+        Authorization:
+          "Bearer " + jwt.sign(user, process.env.ACCESS_TOKEN_SECRET),
+      },
+    });
 
-    if (!event) {
+    if (!event.data) {
       throw new ResourceNotFoundError("Event");
     }
 
-    const tickets = await Ticket.find();
+    const tickets = await Ticket.find({ eventId: id });
 
     return tickets.map((ticket) => ticket.toJSON());
   },
 
-  async getEventTicketById(event_id, id) {
-    const event = await axios.get(`${baseURlEventService}/events/${event_id}`);
+  async getEventTicketById({ user, event_id, ticket_id }) {
+    const event = await axios.get(`${baseURlEventService}/events/${event_id}`, {
+      headers: {
+        Authorization:
+          "Bearer " + jwt.sign(user, process.env.ACCESS_TOKEN_SECRET),
+      },
+    });
 
-    if (!event) {
+    if (!event.data) {
       throw new ResourceNotFoundError("Event");
     }
 
-    const ticket = await Ticket.findById(id);
+    const ticket = await Ticket.findById(ticket_id);
 
     if (!ticket) {
       throw new ResourceNotFoundError("Event Ticket");
@@ -48,17 +59,13 @@ module.exports = {
     return ticket.toJSON();
   },
 
-  async getEventById(id) {
-    const event = await Event.findById(id);
-    if (!event) {
-      throw new ResourceNotFoundError("Event");
-    }
-
-    return event.toJSON();
-  },
-
-  async createEventTicket({ userId, eventId, name, price, quota, date }) {
-    const event = await axios.get(`${baseURlEventService}/events/${eventId}`);
+  async createEventTicket({ user, userId, eventId, name, price, quota, date }) {
+    const event = await axios.get(`${baseURlEventService}/events/${eventId}`, {
+      headers: {
+        Authorization:
+          "Bearer " + jwt.sign(user, process.env.ACCESS_TOKEN_SECRET),
+      },
+    });
     if (!event.data) {
       throw new ResourceNotFoundError("Event");
     }
