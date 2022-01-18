@@ -11,7 +11,7 @@ const Event = new mongoose.Schema({
   },
   creatorId: {
     type: String,
-    required: false
+    required: true
   },
 },
 {

@@ -1,15 +1,15 @@
 const Event = require('../models/event');
-const Ticket = require('../models/ticket');
 const EventRegistration = require('../models/event-registration');
 const TransactionService = require('./transaction');
+const jwt = require("jsonwebtoken");
+const axios = require('axios')
+const BaseURLTicketService = 'http://localhost:3004'
 
 const {
   ResourceNotFoundError,
   ValidationError,
-  EventTicketAlreadyUsedError,
   UserAlreadyRegisteredToEventError,
   EventAlreadyPassedError,
-  ForbiddenError,
 } = require('../lib/error');
 
 function handleDBValidationError(error) {
@@ -48,14 +48,20 @@ module.exports = {
     return event.toJSON();
   },
 
-  async registerEvent({ userId, eventId, ticketId }) {
+  async registerEvent({ user, eventId, ticketId }) {
     const event = await Event.findById(eventId);
     if (!event) {
       throw new ResourceNotFoundError('Event');
     }
 
-    const ticket = await Ticket.findById(ticketId);
-    if (!ticket) {
+    const ticket = await axios.get(`${BaseURLTicketService}/events/${eventId}/tickets/${ticketId}`, {
+      headers: {
+        Authorization:
+          "Bearer " + jwt.sign(user, process.env.ACCESS_TOKEN_SECRET),
+      },
+    });
+
+    if (!ticket.data) {
       throw new ResourceNotFoundError('Ticket');
     }
 
@@ -65,7 +71,7 @@ module.exports = {
     }
 
     // check current registration
-    const registered = await EventRegistration.exists({ userId, eventId, ticketId });
+    const registered = await EventRegistration.exists({ userId: user.id, eventId, ticketId });
     if (registered) {
       throw new UserAlreadyRegisteredToEventError();
     }
@@ -78,8 +84,8 @@ module.exports = {
       },
     };
 
-    const trx = await TransactionService.pay({ userId, item, amount: ticket.price });
-    const registration = await EventRegistration.create({ userId, eventId, ticketId });
+    const trx = await TransactionService.pay({ userId: user.id, item, amount: ticket.data.data.price });
+    const registration = await EventRegistration.create({ userId: user.id, eventId, ticketId });
 
     return {
       transactionId: trx.id,

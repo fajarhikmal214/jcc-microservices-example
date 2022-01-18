@@ -5,7 +5,7 @@ module.exports = {
   createEvent(req, res, next) {
     EventService.createEvent({
       ...req.body,
-      creatorId: req.user?.id ?? null,
+      creatorId: req.user.id
     })
       .then(sendResponse(res))
       .catch(next);
@@ -23,7 +23,7 @@ module.exports = {
 
   registerEvent(req, res, next) {
     EventService.registerEvent({
-      userId: req.user.id,
+      user: req.user,
       eventId: req.params.id,
       ticketId: req.body.ticketId,
     })
