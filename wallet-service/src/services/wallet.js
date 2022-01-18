@@ -3,6 +3,7 @@ const Wallet = require("../models/wallet");
 const jwt = require("jsonwebtoken");
 const axios = require("axios").default;
 const logger = require('../lib/logger');
+const { callWithRetry } = require('../lib/failure-handling');
 
 if (!process.env.USER_SERVICE_URL) {
   logger.fatal('USER_SERVICE_URL not provided.');
@@ -13,15 +14,17 @@ const baseURlUserService = process.env.USER_SERVICE_URL;
 
 module.exports = {
   async topup(user, { userId, amount }) {
-    const isUserExist = await axios.get(
-      `${baseURlUserService}/users/${userId}`,
-      {
-        headers: {
-          Authorization:
-            "Bearer " + jwt.sign(user, process.env.ACCESS_TOKEN_SECRET),
-        },
-      }
-    );
+    const isUserExist = await callWithRetry(() => {
+      return axios.get(
+        `${baseURlUserService}/users/${userId}`,
+        {
+          headers: {
+            Authorization:
+              "Bearer " + jwt.sign(user, process.env.ACCESS_TOKEN_SECRET),
+          },
+        }
+      )
+    }, 5);
 
     if (!isUserExist) {
       throw new ResourceNotFoundError("User");

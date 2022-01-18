@@ -9,6 +9,7 @@ services:
     - 3001:3000
     volumes:
     - ./user-service:/app
+    command: npm run watch
 
   auth-services:
     build: auth-service
@@ -19,6 +20,7 @@ services:
     - 3002:3000
     volumes:
     - ./auth-service:/app
+    command: npm run watch
 
   mongo-user:
     image: mongo:4.4
@@ -36,6 +38,7 @@ services:
     - 3003:3000
     volumes:
     - ./event-service:/app
+    command: npm run watch
 
   mongo-event:
     image: mongo:4.4
@@ -52,6 +55,7 @@ services:
     - 3004:3000
     volumes:
     - ./ticket-service:/app
+    command: npm run watch
 
   mongo-ticket:
     image: mongo:4.4
@@ -68,6 +72,7 @@ services:
     - 3005:3000
     volumes:
     - ./wallet-service:/app
+    command: npm run watch
 
   mongo-wallet:
     image: mongo:4.4
