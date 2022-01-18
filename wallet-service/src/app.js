@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const router = require('./routes');
 const { errorHandler, requestLog } = require('./middlewares');
 const app = express();
-const port = process.env.PORT || 3005;
+const port = process.env.PORT || 3000;
 
 if (!process.env.ACCESS_TOKEN_SECRET) {
   logger.fatal('ACCESS_TOKEN_SECRET not provided.');

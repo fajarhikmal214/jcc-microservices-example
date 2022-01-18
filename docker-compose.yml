@@ -1,0 +1,64 @@
+version: '3'
+services:
+  user-service:
+    build: user-service
+    environment:
+    - ACCESS_TOKEN_SECRET=secret
+    - MONGODB_URL=mongodb://mongo-user:27017
+    ports:
+    - 3001:3000
+
+  auth-services:
+    build: auth-service
+    environment:
+    - ACCESS_TOKEN_SECRET=secret
+    - MONGODB_URL=mongodb://mongo-user:27017
+    ports:
+    - 3002:3000
+
+  mongo-user:
+    image: mongo:4.4
+    volumes:
+    - mongo-user-volume:/data/db
+
+  event-service:
+    build: event-service
+    environment:
+    - ACCESS_TOKEN_SECRET=secret
+    - MONGODB_URL=mongodb://mongo-event:27017
+    ports:
+    - 3003:3000
+  mongo-event:
+    image: mongo:4.4
+    volumes:
+      - mongo-event-volume:/data/db
+
+  ticket-service:
+    build: ticket-service
+    environment:
+    - ACCESS_TOKEN_SECRET=secret
+    - MONGODB_URL=mongodb://mongo-ticket:27017
+    ports:
+    - 3004:3000
+  mongo-ticket:
+    image: mongo:4.4
+    volumes:
+      - mongo-ticket-volume:/data/db
+
+  wallet-service:
+    build: wallet-service
+    environment:
+    - ACCESS_TOKEN_SECRET=secret
+    - MONGODB_URL=mongodb://mongo-wallet:27017
+    ports:
+    - 3005:3000
+  mongo-wallet:
+    image: mongo:4.4
+    volumes:
+      - mongo-wallet-volume:/data/db
+
+volumes:
+  mongo-user-volume:
+  mongo-event-volume:
+  mongo-ticket-volume:
+  mongo-wallet-volume:
