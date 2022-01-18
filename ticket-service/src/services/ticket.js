@@ -1,7 +1,14 @@
 const Ticket = require("../models/ticket");
+const logger = require('../lib/logger');
 const jwt = require("jsonwebtoken");
 const axios = require("axios").default;
-const baseURlEventService = "http://localhost:3003";
+
+if (!process.env.EVENT_SERVICE_URL) {
+  logger.fatal('EVENT_SERVICE_URL not provided.');
+  process.exit(1);
+}
+
+const baseURlEventService = process.env.EVENT_SERVICE_URL;
 
 const {
   ResourceNotFoundError,

@@ -1,10 +1,19 @@
 const Transaction = require("../models/transaction");
 const axios = require("axios");
+const logger = require('../lib/logger');
+
 const {
   WalletBalanceNotSufficientError,
   ResourceNotFoundError,
 } = require("../lib/error");
-const BaseURLWalletService = "http://localhost:3005";
+
+
+if (!process.env.WALLET_SERVICE_URL) {
+  logger.fatal('WALLET_SERVICE_URL not provided.');
+  process.exit(1);
+}
+
+const BaseURLWalletService = process.env.WALLET_SERVICE_URL;
 
 module.exports = {
   async pay({ userId, item, amount }) {

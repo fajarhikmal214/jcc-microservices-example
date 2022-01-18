@@ -7,6 +7,8 @@ services:
     - MONGODB_URL=mongodb://mongo-user:27017
     ports:
     - 3001:3000
+    volumes:
+    - ./user-service:/app
 
   auth-services:
     build: auth-service
@@ -15,6 +17,8 @@ services:
     - MONGODB_URL=mongodb://mongo-user:27017
     ports:
     - 3002:3000
+    volumes:
+    - ./auth-service:/app
 
   mongo-user:
     image: mongo:4.4
@@ -26,8 +30,13 @@ services:
     environment:
     - ACCESS_TOKEN_SECRET=secret
     - MONGODB_URL=mongodb://mongo-event:27017
+    - TICKET_SERVICE_URL=http://jcc-microservices-example-ticket-service-1:3000
+    - WALLET_SERVICE_URL=http://jcc-microservices-example-wallet-service-1:3000
     ports:
     - 3003:3000
+    volumes:
+    - ./event-service:/app
+
   mongo-event:
     image: mongo:4.4
     volumes:
@@ -38,8 +47,12 @@ services:
     environment:
     - ACCESS_TOKEN_SECRET=secret
     - MONGODB_URL=mongodb://mongo-ticket:27017
+    - EVENT_SERVICE_URL=http://jcc-microservices-example-event-service-1:3000
     ports:
     - 3004:3000
+    volumes:
+    - ./ticket-service:/app
+
   mongo-ticket:
     image: mongo:4.4
     volumes:
@@ -50,8 +63,12 @@ services:
     environment:
     - ACCESS_TOKEN_SECRET=secret
     - MONGODB_URL=mongodb://mongo-wallet:27017
+    - USER_SERVICE_URL=http://jcc-microservices-example-user-service-1:3000
     ports:
     - 3005:3000
+    volumes:
+    - ./wallet-service:/app
+
   mongo-wallet:
     image: mongo:4.4
     volumes:

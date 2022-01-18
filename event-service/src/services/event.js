@@ -1,9 +1,16 @@
 const Event = require('../models/event');
 const EventRegistration = require('../models/event-registration');
 const TransactionService = require('./transaction');
+const logger = require('../lib/logger');
 const jwt = require("jsonwebtoken");
 const axios = require('axios')
-const BaseURLTicketService = 'http://localhost:3004'
+
+if (!process.env.TICKET_SERVICE_URL) {
+  logger.fatal('TICKET_SERVICE_URL not provided.');
+  process.exit(1);
+}
+
+const BaseURLTicketService = process.env.TICKET_SERVICE_URL
 
 const {
   ResourceNotFoundError,

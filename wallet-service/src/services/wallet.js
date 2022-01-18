@@ -2,7 +2,14 @@ const { ResourceNotFoundError } = require("../lib/error");
 const Wallet = require("../models/wallet");
 const jwt = require("jsonwebtoken");
 const axios = require("axios").default;
-const baseURlUserService = "http://localhost:3001";
+const logger = require('../lib/logger');
+
+if (!process.env.USER_SERVICE_URL) {
+  logger.fatal('USER_SERVICE_URL not provided.');
+  process.exit(1);
+}
+
+const baseURlUserService = process.env.USER_SERVICE_URL;
 
 module.exports = {
   async topup(user, { userId, amount }) {
