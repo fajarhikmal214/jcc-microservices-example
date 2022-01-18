@@ -1,0 +1,21 @@
+version: '3'
+services:
+  app:
+    build: .
+    environment:
+    - ACCESS_TOKEN_SECRET=secret
+    - MONGODB_URL=mongodb://mongo-user:27017/user
+    ports:
+    - 3002:3000
+    volumes:
+    - .:/app
+    command: npm run watch
+    networks:
+    - db-user-external
+
+volumes:
+  mongo-volume:
+
+networks:
+  db-user-external:
+    external: true

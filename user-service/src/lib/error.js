@@ -1,0 +1,96 @@
+class ApiError extends Error {
+  constructor(message, status = 500) {
+    super(message);
+    this.httpStatus = status;
+    this.class = this.constructor;
+  }
+}
+
+class ResourceNotFoundError extends ApiError {
+  constructor(resource = 'Resource') {
+    super(`${resource} not found`, 404);
+  }
+}
+
+class UserNotFoundError extends ApiError {
+  constructor(message = 'User not found') {
+    super(message, 404);
+  }
+}
+
+class ValidationError extends ApiError {
+  constructor(details) {
+    super(`Validation error: ${details}`, 400);
+  }
+}
+
+class UnauthorizedError extends ApiError {
+  constructor(message = 'You aren\'t authorize to access this') {
+    super(message, 401);
+  }
+}
+
+class InvalidLoginError extends ApiError {
+  constructor(message = 'Username or password incorrect') {
+    super(message, 401);
+  }
+}
+
+class UserAlreadyUsedError extends ApiError {
+  constructor(message = 'Username already used') {
+    super(message, 409);
+  }
+}
+
+class EventTicketAlreadyUsedError extends ApiError {
+  constructor(message = 'Event ticket name for this event already used') {
+    super(message, 409);
+  }
+}
+
+class UserAlreadyRegisteredToEventError extends ApiError {
+  constructor(message = 'User already registered using this event ticket') {
+    super(message, 409);
+  }
+}
+
+class WalletBalanceNotSufficientError extends ApiError {
+  constructor(message = 'Your wallet balance is not sufficient') {
+    super(message, 400);
+  }
+}
+
+class EventAlreadyPassedError extends ApiError {
+  constructor(message = 'Event with this ticket is already passed.') {
+    super(message, 400);
+  }
+}
+
+class ForbiddenError extends ApiError {
+  constructor(message = 'Your permission is not enough to access this.') {
+    super(message, 403);
+  }
+}
+
+class InternalServerError extends ApiError {
+  constructor(message = 'Something happened with our internal server :(') {
+    super(message);
+  }
+}
+
+module.exports = {
+  ApiError,
+  ApiError,
+  UserNotFoundError,
+  ResourceNotFoundError,
+  ValidationError,
+  UnauthorizedError,
+  InternalServerError,
+  InvalidLoginError,
+  UserAlreadyUsedError,
+  EventTicketAlreadyUsedError,
+  UserAlreadyRegisteredToEventError,
+  WalletBalanceNotSufficientError,
+  EventAlreadyPassedError,
+  ForbiddenError,
+};
