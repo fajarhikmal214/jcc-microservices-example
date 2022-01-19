@@ -3,7 +3,9 @@ const { sendResponse } = require('../lib/api');
 
 module.exports = {
   getUserById(req, res, next) {
-    UserService.getUserById(req.params.id).then(sendResponse(res)).catch(next);
+    setTimeout(() => {
+      UserService.getUserById(req.params.id).then(sendResponse(res)).catch(next);
+    }, 1000);
   },
 
   getAllUser(req, res, next) {
